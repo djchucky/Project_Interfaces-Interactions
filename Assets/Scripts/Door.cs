@@ -9,6 +9,11 @@ public class Door : MonoBehaviour, IInteractable
     private bool _isOpen;
     private Animator _anim;
 
+    //Designer need the ability to require an item for the door (Keycard)
+    //Reference to the required item
+    [SerializeField] private bool _requireItem;
+    [SerializeField] private InventoryManager.AllItems _itemRequired;
+
     private void Start()
     {
         _anim = GetComponent<Animator>();
@@ -32,20 +37,22 @@ public class Door : MonoBehaviour, IInteractable
 
     public void Interact()
     {
-        if(_isLocked)
+        if (_isLocked)
         {
-            _doorPanels[0].gameObject.SetActive(true);
-            _doorPanels[1].gameObject.SetActive(false);
+            if (_requireItem && CheckRequiredItem(_itemRequired))
+            {
+                UnlockDoor();
+                return;
+            }
+
             Debug.Log("Door is Locked, you need to unlock it");
         }
-
         else
         {
             _isOpen = !_isOpen;
             _anim.SetBool("IsOpen", _isOpen);
         }
-
-    }    
+    }
 
     public void Activate(bool hasTriggered)
     {
@@ -77,5 +84,20 @@ public class Door : MonoBehaviour, IInteractable
         _doorPanels[0].gameObject.SetActive(true);
         _doorPanels[1].gameObject.SetActive(false);
 
+    }
+
+    //Method to check if we have required item
+    private bool CheckRequiredItem(InventoryManager.AllItems itemRequired)
+    {
+        bool hasItem = false;
+        //Check inventory
+        //if we do we unlock the door and remove item from inventory
+        if(InventoryManager.Instance._inventoryItems.Contains(itemRequired))
+        {
+            InventoryManager.Instance.RemoveItems(itemRequired);
+            hasItem = true;
+        }
+
+        return hasItem;
     }
 }
