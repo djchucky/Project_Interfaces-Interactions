@@ -15,8 +15,6 @@ public class PowerCharger : PowerBase
         base.OnCollisionEnter (collision);
         if((collision.gameObject.CompareTag("PowerCore")))
         {
-            PowerCore powerCore = collision.gameObject.GetComponent<PowerCore>();
-
             _powerLevel.Apply(collision);
         }
     }
