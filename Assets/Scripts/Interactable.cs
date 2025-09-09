@@ -1,15 +1,18 @@
+using StarterAssets;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Interactable : MonoBehaviour
 {
+    private StarterAssetsInputs _starterAssetsInput;
     [SerializeField] private GameObject _uIContainer;
     private bool _isInteracting;
     private IInteractable _interactable;
   
     private void Awake()
     {
+        _starterAssetsInput = GameObject.FindWithTag("Player").GetComponent<StarterAssetsInputs>();
         _uIContainer.SetActive(false);
         _interactable = GetComponent<IInteractable>();
     }
@@ -19,7 +22,7 @@ public class Interactable : MonoBehaviour
         if (_isInteracting)
         {
            //Interaction Code
-           if (Input.GetKeyDown(KeyCode.E))
+           if (_starterAssetsInput.interact)
            {
                 Debug.Log("Interacting");
                 _interactable.Interact();

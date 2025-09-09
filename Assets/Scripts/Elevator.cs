@@ -1,6 +1,8 @@
+using StarterAssets;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Elevator : MonoBehaviour, IInteractable
 {
@@ -20,6 +22,16 @@ public class Elevator : MonoBehaviour, IInteractable
     [SerializeField] private int _maxLevelIndex;
     [SerializeField] private Transform[] _levelsPosition;
 
+    //Reference to player input
+    //Reference to the Elevator UI
+
+    private PlayerInput _playerInput;
+    [SerializeField] GameObject _elevatorUI;
+
+    private void Awake()
+    {
+        _playerInput = GameObject.FindWithTag("Player").GetComponent<PlayerInput>();
+    }
 
     private void Start()
     {
@@ -29,7 +41,12 @@ public class Elevator : MonoBehaviour, IInteractable
 
     public void Interact()
     {
-        MoveElevator();
+        _elevatorUI.SetActive(true);
+        _playerInput.SwitchCurrentActionMap("UI");
+        //Show Elevator UI
+        //Activate UI Action Map
+
+        //MoveElevator();
 
     }
 
@@ -77,4 +94,19 @@ public class Elevator : MonoBehaviour, IInteractable
         _moveRoutine = null;
         Debug.Log("Move routine is null");
     }
+
+    //new method to check floor integer value from onclick event
+    //Choose the floor
+    //Hide the UI
+    //Switch action map back to player
+    //Move Elevator
+
+    public void ChooseFloor(int floorIndex)
+    {
+        _moveRoutine = StartCoroutine(MoveElevator(_levelsPosition[floorIndex]));
+        _elevatorUI.SetActive(false);
+        _playerInput.SwitchCurrentActionMap("Player");
+    }
+
+
 }
